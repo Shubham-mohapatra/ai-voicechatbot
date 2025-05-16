@@ -14,24 +14,57 @@ import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import LottieView from 'lottie-react-native';
+import  {  RefreshControl } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
 export default function App() {
+  const [userPreference, setUserPreferences] = useState({
+    name: "Shubham",
+    theme: "dark",
+    language: "en",
+    speechRate: 1.0,
+    notifications: true,
+  });
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 18) return "Good afternoon";
+    return "Good evening";
+  };
+
+  const welcomeMessage = `${getGreeting()} ${userPreference.name}! How can I assist you today?`;
+
   const [messages, setMessages] = useState([
-    { id: 1, text: "Hello! How can I help you today?", isUser: false }
+    { 
+      id: 1, 
+      text: welcomeMessage, 
+      isUser: false,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    }
   ]);
   const [isRecording, setIsRecording] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
-  
-  // Animation values
+
+ // Conversational Context 
+
+  type  Message = {
+    id: number;
+    text: string;
+    isUser: boolean;
+    timestamp: string;
+    emotion?: 'happy' | 'neutral' | 'thinking' | 'confused';
+    context?: string;
+  };
+
+
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const slideInAnim = useRef(new Animated.Value(width)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const messageAnimRef = useRef(null);
+  const messageAnimRef = useRef<LottieView>(null);
 
   useEffect(() => {
-    // Entry animations
     Animated.parallel([
       Animated.timing(slideInAnim, {
         toValue: 0,
@@ -71,7 +104,6 @@ export default function App() {
   const toggleRecording = () => {
     setIsRecording(prev => {
       if (!prev) {
-        // Simulate recording and response
         setTimeout(() => {
           setIsRecording(false);
           setIsThinking(true);
@@ -87,7 +119,6 @@ export default function App() {
   };
 
   const addMessage = (text: string, isUser: boolean) => {
-    // Reset animation ref if it exists
     if (messageAnimRef.current) {
       messageAnimRef.current.reset();
     }
@@ -98,7 +129,7 @@ export default function App() {
         id: prev.length + 1,
         text,
         isUser,
-        animated: false // Add this flag
+        animated: false 
       }
     ]);
   };
@@ -126,14 +157,36 @@ export default function App() {
           >
             <Text style={styles.profileText}>S</Text>
           </LinearGradient>
-          <View>
+          <View style={styles.headerContent}>
             <Text style={styles.headerTitle}>Hello Shubham!</Text>
             <Text style={styles.headerSubtitle}>How can I help you today?</Text>
           </View>
+          <TouchableOpacity 
+            style={styles.newChatButton}
+            onPress={() => {
+              setMessages([]);
+              addMessage(welcomeMessage, false);
+            }}
+          >
+            <Ionicons name="add-circle" size={32} color="#6e45e2" />
+          </TouchableOpacity>
         </View>
       </Animated.View>
 
       <ScrollView 
+        // Pull to refresh
+
+        refreshControl={
+          <RefreshControl
+            refreshing={false}
+            onRefresh={() => {
+              setMessages([]);
+              addMessage("Hello! How can I help you today?", false);
+            }}
+            tintColor= "#fff"
+          />
+        }
+
         style={styles.messagesContainer}
         contentContainerStyle={styles.messagesContent}
         ref={ref => {
@@ -178,7 +231,17 @@ export default function App() {
                   onLayout={() => {
                     if (messageAnimRef.current) {
                       setTimeout(() => {
-                        messageAnimRef.current.play();
+                        if (messageAnimRef.current) {
+                          if (messageAnimRef.current) {
+                            if (messageAnimRef.current) {
+                              if (messageAnimRef.current) {
+                                if (messageAnimRef.current) {
+                                  messageAnimRef.current.play();
+                                }
+                              }
+                            }
+                          }
+                        }
                       }, 100);
                     }
                   }}
@@ -191,6 +254,7 @@ export default function App() {
             ]}>
               {msg.text}
             </Text>
+            <Text style={styles.timestampText}>{msg.timestamp}</Text>
             {msg.isUser && (
               <View style={styles.userAvatar}>
                 <Text style={styles.userAvatarText}>You</Text>
@@ -315,6 +379,13 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.7)',
     fontSize: 14,
   },
+  headerContent: {
+    flex: 1,
+  },
+  newChatButton: {
+    padding: 8,
+    borderRadius: 20,
+  },
   messagesContainer: {
     flex: 1,
   },
@@ -423,4 +494,35 @@ const styles = StyleSheet.create({
     width: 60,
     height: 30,
   },
+  timestampText: {
+    fontSize: 10,
+    color: 'rgba(255,255,255,0.5)',
+    alignSelf: 'flex-end',
+    marginTop: 4,
+  },
+  lodaingContainer: {
+    position : 'absolute',
+    top : 0 ,
+    left : 0 ,
+    right : 0 ,
+    height : 2 ,
+    backgroundColor : 'rgba(255,255,255,0.1)',
+  },
+  loadingBar: {
+    height : '100%' ,
+    backgroundColor :  '#6e45e2',
+    width : '20%',
+  },
+
+  errorMessage : { 
+    backgroundColor : 'rgba(255,0,0,0.1)',
+    borderColor  : '#e74c3c',
+    borderWidth : 1,
+  },
+    errorText: {
+    color: '#e74c3c',
+    fontSize: 12,
+    marginTop: 4,
+  },
+  
 });
