@@ -49,15 +49,6 @@ export default function App() {
 
  // Conversational Context 
 
-  type  Message = {
-    id: number;
-    text: string;
-    isUser: boolean;
-    timestamp: string;
-    emotion?: 'happy' | 'neutral' | 'thinking' | 'confused';
-    context?: string;
-  };
-
 
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const slideInAnim = useRef(new Animated.Value(width)).current;
