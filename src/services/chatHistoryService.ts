@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Message } from '../types/message';
+import { speakText } from './speechService';
 
 const CHAT_HISTORY_KEY = 'chatHistory';
 
@@ -14,6 +15,16 @@ export const saveChatHistory = async (messages: Message[]): Promise<void> => {
       messages,
       timestamp: new Date().toISOString(),
     };
+    
+    // Speak the latest AI message if it exists
+    const lastMessage = messages[messages.length - 1];
+    if (!lastMessage.isUser) {
+      await speakText(lastMessage.text, {
+        stability: 0.7,
+        similarityBoost: 0.7
+      });
+    }
+    
     await AsyncStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(chatHistory));
   } catch (error) {
     console.error('Error saving chat history:', error);
