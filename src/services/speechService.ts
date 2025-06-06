@@ -1,6 +1,6 @@
 import { Audio } from 'expo-av';
 import * as FileSystem from 'expo-file-system';
-import { ELEVEN_LABS_API_KEY } from '@env';
+import { ELEVEN_LABS_API_KEY, ELEVEN_LABS_VOICE_ID } from '@env';
 
 const API_URL = 'https://api.elevenlabs.io/v1/text-to-speech';
 const DEFAULT_VOICE_ID = 'YOUR_DEFAULT_VOICE_ID'; 
@@ -46,14 +46,13 @@ class ConversationService {
         playThroughEarpieceAndroid: false,
       });
 
-      // Stop any currently playing audio
       if (this.currentSound) {
         await this.currentSound.unloadAsync();
         this.currentSound = null;
       }
 
       console.log('Making request to ElevenLabs...');
-      const response = await fetch(`${API_URL}/${DEFAULT_VOICE_ID}`, {
+      const response = await fetch(`${API_URL}/${options.voiceId || ELEVEN_LABS_VOICE_ID}`, {
         method: 'POST',
         headers: {
           'xi-api-key': ELEVEN_LABS_API_KEY,

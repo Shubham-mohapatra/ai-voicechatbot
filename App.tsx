@@ -338,7 +338,7 @@ export default function App() {
                 onLayout={() => {
                   if (messageAnimRef.current) {
                     setTimeout(() => {
-                      messageAnimRef.current.play();
+                      messageAnimRef.current?.play();
                     }, 100);
                   }
                 }}
@@ -397,7 +397,7 @@ export const SmartSuggestions: React.FC<SmartSuggestionsProps> = ({
           style={styles.suggestionChip}
           onPress={() => onSelect(suggestion)}
         >
-          <Text style={styles.suggestionText}>{suggestion}</Text>
+          <Text style={{ color: '#fff', fontSize: 14 }}>{suggestion}</Text>
         </TouchableOpacity>
       )
     )}
@@ -630,7 +630,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     zIndex: 1000,
   },
-  errorText: {
+  errorTextStyle: {
     color: "#fff",
     textAlign: "center",
     fontSize: 14,

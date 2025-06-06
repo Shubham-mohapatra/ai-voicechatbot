@@ -15,8 +15,7 @@ export const saveChatHistory = async (messages: Message[]): Promise<void> => {
       messages,
       timestamp: new Date().toISOString(),
     };
-    
-    // Speak the latest AI message if it exists
+
     const lastMessage = messages[messages.length - 1];
     if (!lastMessage.isUser) {
       await speakText(lastMessage.text, {
