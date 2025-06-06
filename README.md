@@ -5,9 +5,6 @@ A React Native chat interface with smooth animations and a modern design.
 ## Features
 
 - Animated chat interface
-- Voice recording functionality
-- Real-time typing indicators
-- Custom avatar animations
 - Gradient backgrounds
 - Modern UI design
 
